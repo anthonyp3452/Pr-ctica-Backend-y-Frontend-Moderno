@@ -377,8 +377,7 @@ Eliminar un socio elimina en cascada sus membresías y asistencias.
 cd backend
 cp .env.example .env
 npm install
-npm run db:migrate
-npm run db:seed
+npm run db:setup
 ```
 
-El seed carga socios, planes, membresías y asistencias de ejemplo. El usuario administrador se crea en la fase de autenticación.
+`db:setup` aplica migraciones, datos de negocio de ejemplo y crea/actualiza el administrador con hash bcrypt a partir de `SEED_ADMIN_*` en `.env`.
