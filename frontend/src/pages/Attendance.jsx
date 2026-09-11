@@ -1,111 +1,12 @@
-import { useState } from "react";
-import { Plus } from "lucide-react";
-import { attendance, members } from "../data/demo";
-import {
-  EmptyState,
-  MemberIdentity,
-  PageHeading,
-  PhaseNote,
-  SearchInput,
-} from "../components/Ui";
+import { useEffect, useState } from "react";
+import { PageHeading } from "../components/Ui";
+import { api } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function Attendance() {
-  const [search, setSearch] = useState("");
-  const [date, setDate] = useState("2026-09-10");
-  const filtered = attendance.filter((entry) => {
-    const member = members.find((m) => m.id === entry.memberId);
-    const text = `${member.name} ${member.email}`
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
-    const query = search
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .trim();
-    return (!date || entry.date === date) && text.includes(query);
-  });
-  return (
-    <>
-      <PageHeading
-        title="Asistencias"
-        description="Cada entrenamiento empieza con una entrada."
-      >
-        <button className="button primary" disabled>
-          <Plus size={18} />
-          Registrar entrada
-        </button>
-      </PageHeading>
-      <section className="panel">
-        <div className="list-toolbar">
-          <SearchInput
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <label className="date-filter">
-            Fecha
-            <input
-              aria-label="Filtrar por fecha de asistencia"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </label>
-        </div>
-        {filtered.length ? (
-          <div
-            className="table-scroll"
-            role="region"
-            aria-label="Asistencias de ejemplo"
-            tabIndex={0}
-          >
-            <table>
-              <thead>
-                <tr>
-                  <th>Socio</th>
-                  <th>Plan</th>
-                  <th>Fecha</th>
-                  <th>Entrada</th>
-                  <th>Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((entry) => {
-                  const member = members.find((m) => m.id === entry.memberId);
-                  return (
-                    <tr key={entry.id}>
-                      <td>
-                        <MemberIdentity member={member} />
-                      </td>
-                      <td>{member.plan}</td>
-                      <td>{entry.date}</td>
-                      <td className="tabular">{entry.time}</td>
-                      <td>
-                        <span className="entry-status">
-                          <span />
-                          Registrada
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <EmptyState
-            title="Sin entradas para esta búsqueda"
-            description="Prueba otra fecha o consulta otro socio."
-          />
-        )}
-        <div className="list-footer" role="status">
-          {filtered.length} asistencias de ejemplo
-        </div>
-      </section>
-      <PhaseNote>
-        El registro real y la comprobación de membresía vigente se integrarán en
-        la fase 5.
-      </PhaseNote>
-    </>
-  );
+  const { token } = useAuth(); const [date, setDate] = useState(new Date().toISOString().slice(0, 10)); const [entries, setEntries] = useState([]); const [members, setMembers] = useState([]); const [error, setError] = useState(""); const [message, setMessage] = useState("");
+  const load = async () => { try { setEntries(await api.asistencias(token, date)); setMembers(await api.socios(token)); } catch (e) { setError(e.message); } };
+  useEffect(() => { load(); }, [token, date]);
+  const register = async (event) => { event.preventDefault(); const socioId = Number(new FormData(event.currentTarget).get("socio_id")); try { await api.registrarAsistencia(socioId, token); setMessage("Entrada registrada correctamente."); load(); } catch (e) { setError(e.message); } };
+  return <><PageHeading title="Asistencias" description="Registra las entradas de socios con membresía vigente."/>{message && <p className="form-message success">{message}</p>}{error && <p className="form-message error">{error}</p>}<section className="panel padded"><form className="form-grid" onSubmit={register}><label className="field">Socio<select name="socio_id" required><option value="">Selecciona un socio</option>{members.map((m) => <option value={m.id} key={m.id}>{m.nombre}</option>)}</select></label><button className="button primary">Registrar entrada</button></form></section><section className="panel"><div className="list-toolbar"><label className="date-filter">Fecha<input type="date" value={date} onChange={(e) => setDate(e.target.value)}/></label></div>{entries.length ? <div className="table-scroll"><table><thead><tr><th>Socio</th><th>Fecha</th><th>Hora</th></tr></thead><tbody>{entries.map((entry) => <tr key={entry.id}><td>{entry.socio_nombre}</td><td>{entry.dia_local}</td><td>{new Date(entry.registrado_en).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td></tr>)}</tbody></table></div> : <p className="state-message">No hay asistencias para esta fecha.</p>}</section></>;
 }
