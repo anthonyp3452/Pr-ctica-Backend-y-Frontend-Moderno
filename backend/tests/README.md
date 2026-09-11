@@ -48,6 +48,8 @@ También incluyen el CRUD de socios: alta, consulta, edición, eliminación, dup
 
 Planes y membresías: cálculo inclusivo de `fecha_fin`, solapamientos, plan inactivo/inexistente, instantánea al editar plan y bloqueo de eliminación con referencias.
 
+Asistencias y dashboard: entrada válida, sin membresía, vencida, duplicado del día, cambio de día local (`GYM_TIMEZONE`), filtros e indicadores con datos conocidos.
+
 Se ejecutan en serie (`--test-concurrency=1`) para evitar conflictos del singleton de SQLite.
 
 ## Regla de fechas de membresía
@@ -59,3 +61,12 @@ fecha_fin = fecha_inicio + duracion_dias - 1
 ```
 
 Ejemplo: inicio `2026-09-01`, duración 30 → fin `2026-09-30`.
+
+## Indicadores del dashboard
+
+| Campo | Definición |
+| --- | --- |
+| `socios_activos` | Socios con ≥1 membresía vigente en el día local actual |
+| `membresias_vencidas` | Membresías con `fecha_fin` anterior al día local |
+| `asistencias_hoy` | Asistencias con `dia_local` = día local actual |
+| `actividad_reciente` | Últimas 10 asistencias |
