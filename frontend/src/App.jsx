@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Members from "./pages/Members";
@@ -27,6 +28,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route element={<ProtectedRoute />}>
       <Route element={<Layout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -38,6 +40,13 @@ export default function App() {
         <Route path="/asistencias" element={<Attendance />} />
         <Route path="*" element={<NotFound />} />
       </Route>
+      </Route>
     </Routes>
   );
+}
+
+function ProtectedRoute() {
+  const { session, checking } = useAuth();
+  if (checking) return <main className="center-state">Comprobando sesión…</main>;
+  return session ? <Outlet /> : <Navigate to="/login" replace />;
 }

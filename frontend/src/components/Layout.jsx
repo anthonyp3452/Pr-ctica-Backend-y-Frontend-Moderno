@@ -11,6 +11,7 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const links = [
   { to: "/dashboard", text: "Resumen", icon: LayoutDashboard },
@@ -38,6 +39,7 @@ export function Brand() {
 }
 
 export default function Layout() {
+  const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   useEffect(() => {
@@ -92,8 +94,8 @@ export default function Layout() {
             <div className="workspace-profile">
               <span className="profile-avatar">GC</span>
               <div>
-                <strong>Recepción</strong>
-                <small>Vista de ejemplo</small>
+                <strong>{user?.nombre || "Recepción"}</strong>
+                <button className="logout-link" onClick={logout}>Cerrar sesión</button>
               </div>
               <Link to="/login" aria-label="Ver pantalla de acceso">
                 <ArrowUpRight size={19} />
