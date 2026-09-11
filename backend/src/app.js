@@ -3,7 +3,9 @@ const cors = require('cors');
 const { config } = require('./config');
 const healthRouter = require('./routes/health');
 const authRouter = require('./routes/auth');
+const sociosRouter = require('./routes/socios');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
+const { authenticate } = require('./middleware/authenticate');
 const { migrate } = require('./db');
 
 function createApp({ migrateOnStart = true } = {}) {
@@ -23,6 +25,7 @@ function createApp({ migrateOnStart = true } = {}) {
 
   app.use('/api/health', healthRouter);
   app.use('/api/auth', authRouter);
+  app.use('/api/socios', authenticate, sociosRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
