@@ -1,10 +1,12 @@
-function todayLocal(timeZone) {
+const { getNow } = require('./clock');
+
+function todayLocal(timeZone, date = getNow()) {
   return new Intl.DateTimeFormat('en-CA', {
     timeZone,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-  }).format(new Date());
+  }).format(date);
 }
 
 function localDayFromUtc(isoUtc, timeZone) {
