@@ -43,3 +43,7 @@ npm test
 Las pruebas usan una base SQLite temporal, no tocan `data/gymcontrol.sqlite`.
 Cubren login válido/inválido, validación de campos, acceso sin token, token alterado y token expirado.
 Verifican que las respuestas no incluyen `password` ni `password_hash`.
+
+También incluyen el CRUD de socios: alta, consulta, edición, eliminación, duplicados, validación, 404, cascada de dependencias y persistencia al reabrir la base.
+
+Se ejecutan en serie (`--test-concurrency=1`) para evitar conflictos del singleton de SQLite.

@@ -11,7 +11,7 @@
     "db:seed": "node src/db/seed.js",
     "db:seed:admin": "node src/db/seedAdmin.js",
     "db:setup": "npm run db:migrate && npm run db:seed && npm run db:seed:admin",
-    "test": "node --test tests/**/*.test.js"
+    "test": "node --test --test-concurrency=1 tests/**/*.test.js"
   },
   "keywords": [
     "gymcontrol",
