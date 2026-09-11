@@ -46,4 +46,16 @@ Verifican que las respuestas no incluyen `password` ni `password_hash`.
 
 También incluyen el CRUD de socios: alta, consulta, edición, eliminación, duplicados, validación, 404, cascada de dependencias y persistencia al reabrir la base.
 
+Planes y membresías: cálculo inclusivo de `fecha_fin`, solapamientos, plan inactivo/inexistente, instantánea al editar plan y bloqueo de eliminación con referencias.
+
 Se ejecutan en serie (`--test-concurrency=1`) para evitar conflictos del singleton de SQLite.
+
+## Regla de fechas de membresía
+
+`fecha_inicio` y `fecha_fin` son inclusivas:
+
+```text
+fecha_fin = fecha_inicio + duracion_dias - 1
+```
+
+Ejemplo: inicio `2026-09-01`, duración 30 → fin `2026-09-30`.
