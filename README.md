@@ -1,34 +1,41 @@
 # GymControl
 
-Proyecto académico para gestionar socios, planes de membresía y asistencias de un gimnasio con React, Express y SQLite.
+Aplicación académica para que el personal de un gimnasio gestione socios, planes de membresía y asistencias. Stack: React + Vite (frontend), Express + SQLite (backend).
 
-**Estado actual: frontend de fase 1.** React tiene ocho pantallas y navegación con datos ficticios. Todavía no hay autenticación, backend ni operaciones de escritura conectadas.
+**Estado actual:** frontend de fase 1 en `main` (pantallas con datos ficticios) y backend completo disponible en `main` (API Express + SQLite). La integración login/CRUD reales entre ambos sigue las fases siguientes.
 
-## Empezar aquí
+| Rol | Persona |
+| --- | --- |
+| Frontend | Anthony |
+| Backend / base de datos | Diego Merida |
 
-Leer la **[guía de desarrollo por fases](docs/GUIA_DESARROLLO.md)**: contiene responsabilidades para los dos desarrolladores, instrucciones paso a paso, 25 commits previstos, dependencias entre tareas y criterios para verificar los 15 requisitos de entrega.
+## Requisitos
 
-- Anthony: frontend React.
-- Segundo integrante: backend y base de datos; nombre pendiente de completar.
-- [Alcance inicial](PLAN.md).
+- **Node.js** LTS **≥ 20** (frontend comprobado con 22.20.0; backend con 22.22.0)
+- npm 10+
+- Git
 
 La guía por fases es la referencia principal para organizar el trabajo. Cada integrante debe realizar sus propios aportes y commits con su identidad real.
 
-## Ejecutar el frontend
+## Estructura
 
-Requisitos: Git y Node.js 22.12 o superior (desarrollo comprobado con Node 22.20.0 y npm 10.9.3).
+```text
+frontend/   # React (Anthony)
+backend/    # Express + SQLite (Diego)
+docs/       # Guía, contrato API, UX y evidencias
+```
+
+## Ejecutar el frontend
 
 ```bash
 git clone https://github.com/anthonyp3452/Pr-ctica-Backend-y-Frontend-Moderno.git
 cd Pr-ctica-Backend-y-Frontend-Moderno
-# Mientras el PR de fase 1 esté pendiente:
-git switch feat/frontend-fase-1
 cd frontend
 npm ci
 npm run dev
 ```
 
-Abrir la dirección local que muestra Vite, normalmente http://127.0.0.1:5173. Una vez integrado el PR, estos archivos estarán disponibles en main y no será necesario cambiar de rama.
+Abrir la dirección local que muestra Vite, normalmente http://127.0.0.1:5173.
 
 Para compilar y consultar el resultado de producción:
 
@@ -39,11 +46,11 @@ npm run preview
 
 La vista de producción utiliza http://127.0.0.1:4173. Los scripts tienen puerto fijo y fallan con un mensaje si está ocupado; detener la instancia anterior antes de iniciar otra.
 
-### Configuración
+### Configuración frontend
 
-`frontend/.env.example` documenta `VITE_API_URL=http://localhost:3000/api`. No es necesario crear `.env` en esta fase, porque no hay llamadas al backend. Al iniciar la integración, copiar el ejemplo a `.env` y ajustar el origen acordado con el compañero. Las variables VITE_ son públicas; no colocar JWT_SECRET ni credenciales en ellas.
+`frontend/.env.example` documenta `VITE_API_URL=http://localhost:3000/api`. No es necesario crear `.env` en la fase 1 del frontend, porque aún usa datos ficticios. Al integrar con la API, copiar el ejemplo a `.env`. Las variables `VITE_` son públicas; no colocar `JWT_SECRET` ni credenciales en ellas.
 
-### Qué se puede revisar ahora
+### Qué se puede revisar ahora (frontend)
 
 - Dashboard, socios, detalle, alta, edición, planes, asistencias y login.
 - Navegación principal y enlaces entre listado, detalle y formularios; ruta 404 e ids desconocidos.
@@ -51,10 +58,69 @@ La vista de producción utiliza http://127.0.0.1:4173. Los scripts tienen puerto
 - Navegación móvil mediante el botón de menú.
 - [Prototipo UX/UI](docs/ux/README.md) y [estado del trabajo frontend](docs/ESTADO_FRONTEND.md).
 
-Login, guardado, eliminación, creación de planes y registro de entradas están pendientes de sus fases de integración. Los botones de escritura están deshabilitados y no simulan éxito. La fecha del encabezado también es de ejemplo, no la fecha actual. Las rutas todavía no están protegidas. El tema oscuro se especifica en el prototipo; su implementación persistente corresponde a C06.
+Login real, guardado, eliminación, creación de planes y registro de entradas dependen de conectar el frontend al backend. Los botones de escritura del frontend aún pueden estar deshabilitados en esta fase visual.
 
-La tipografía usa DM Sans desde Google Fonts con alternativa local Segoe UI/Arial si no hay red. Los iconos Lucide se incluyen en el bundle. Ninguna funcionalidad depende de servicios de imágenes.
+## Backend — instalación y ejecución
 
-## Backend
+```bash
+cd backend
+cp .env.example .env
+```
 
-Su desarrollo pertenece al segundo integrante. Aún no hay servicio ejecutable ni instrucciones reales de base de datos en esta rama; se añadirán con C04/C05 y la integración posterior.
+Edita `.env` y define al menos:
+
+| Variable | Descripción |
+| --- | --- |
+| `PORT` | Puerto HTTP (default `3000`) |
+| `FRONTEND_ORIGIN` | Origen CORS (`http://localhost:5173`) |
+| `JWT_SECRET` | Secreto propio (no uses el de ejemplo en producción) |
+| `JWT_EXPIRES_IN` | Expiración del token (default `8h`) |
+| `SQLITE_PATH` | Ruta del archivo SQLite |
+| `GYM_TIMEZONE` | Zona para día local de asistencias (`America/Guatemala`) |
+| `SEED_ADMIN_CORREO` | Correo del administrador local |
+| `SEED_ADMIN_PASSWORD` | Contraseña local (no la subas al repo) |
+
+```bash
+npm install
+npm run db:setup
+npm run dev
+```
+
+- Health: `GET http://localhost:3000/api/health`
+- Login: `POST http://localhost:3000/api/auth/login` con `{ "correo", "password" }`
+- Contrato completo: [docs/API.md](docs/API.md)
+
+### Scripts útiles
+
+| Comando | Acción |
+| --- | --- |
+| `npm run dev` | Servidor con recarga |
+| `npm start` | Servidor de producción |
+| `npm run db:migrate` | Aplica esquema SQLite |
+| `npm run db:seed` | Datos de negocio de ejemplo |
+| `npm run db:seed:admin` | Crea/actualiza admin con bcrypt |
+| `npm run db:setup` | migrate + seed + admin |
+| `npm test` | Suite de integración (25 tests) |
+| `npm run verify` | Chequeo rápido de entrega (JWT / secretos) |
+
+### Datos de ejemplo
+
+El seed crea socios, planes, membresías y una asistencia de demostración. El usuario admin se crea con `SEED_ADMIN_*` del `.env` local.
+
+No versionar: `node_modules/`, `.env`, ni archivos `.sqlite`.
+
+## Documentación
+
+- [Guía de desarrollo por fases](docs/GUIA_DESARROLLO.md)
+- [Alcance inicial](PLAN.md)
+- [Contrato API](docs/API.md)
+- [Prototipo UX/UI](docs/ux/README.md)
+- [Estado frontend](docs/ESTADO_FRONTEND.md)
+- [Evidencia de verificación backend](docs/evidencias/backend-verificacion.md)
+- [Evidencia de colaboración backend](docs/evidencias/backend-colaboracion.md)
+
+## Puertos acordados
+
+- Frontend: `5173`
+- Backend: `3000`
+- Prefijo API: `/api`

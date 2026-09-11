@@ -99,4 +99,4 @@ Cada integrante configura su identidad real de Git y utiliza su propia cuenta de
 - [ ] README con requisitos, variables de entorno, instalación, datos de ejemplo y ejecución de ambos servicios.
 - [ ] Historial de commits y pull requests de los dos desarrolladores.
 
-Estado actual: planificación inicial; la aplicación todavía no está implementada.
+Estado actual: backend implementado en ramas `feat/backend-fase-*` (Diego Merida). Frontend pendiente de integración.

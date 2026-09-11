@@ -7,8 +7,9 @@ Construir una aplicación web para que el personal de un gimnasio gestione socio
 | Responsable | Trabajo principal |
 |---|---|
 | Anthony (frontend) | Prototipo, React, navegación, componentes, formularios, integración, temas y responsive |
-| Compañero/a (backend; completar nombre) | Express, SQLite, autenticación JWT, reglas de negocio, endpoints y pruebas |
+| Diego Merida (backend) | Express, SQLite, autenticación JWT, reglas de negocio, endpoints y pruebas |
 | Ambos | Acordar API, revisar pull requests, probar integración y documentar |
+
 
 **Plan: 25 commits de trabajo, incluidos 13 de Anthony y 12 del compañero.** El primero publica esta planificación; los otros 24 corresponden a seis fases con dos commits por persona en cada fase. Es una estimación de organización, no una cuota académica: si se requieren correcciones, agregar commits reales. Los commits de merge pueden aumentar el total. Nunca crear commits vacíos ni usar la identidad del compañero para simular participación.
 
