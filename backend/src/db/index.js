@@ -4,22 +4,30 @@ const Database = require('better-sqlite3');
 const { config } = require('../config');
 
 let dbInstance = null;
+let currentPath = null;
 
 function ensureDataDirectory(sqlitePath) {
   const dir = path.dirname(sqlitePath);
   fs.mkdirSync(dir, { recursive: true });
 }
 
-function getDb(sqlitePath = config.sqlitePath) {
-  if (dbInstance && dbInstance.name === sqlitePath) {
+function getDb(sqlitePath) {
+  const resolved = path.resolve(sqlitePath ?? currentPath ?? config.sqlitePath);
+  if (dbInstance && currentPath === resolved) {
     return dbInstance;
   }
 
-  ensureDataDirectory(sqlitePath);
-  const db = new Database(sqlitePath);
+  if (dbInstance) {
+    dbInstance.close();
+    dbInstance = null;
+  }
+
+  ensureDataDirectory(resolved);
+  const db = new Database(resolved);
   db.pragma('foreign_keys = ON');
   db.pragma('journal_mode = WAL');
   dbInstance = db;
+  currentPath = resolved;
   return db;
 }
 
@@ -27,6 +35,7 @@ function closeDb() {
   if (dbInstance) {
     dbInstance.close();
     dbInstance = null;
+    currentPath = null;
   }
 }
 
