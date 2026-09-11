@@ -7,7 +7,9 @@ import { useAuth } from "../context/AuthContext";
 export default function Plans() {
   const { token } = useAuth(); const [plans, setPlans] = useState([]); const [showForm, setShowForm] = useState(false); const [error, setError] = useState(""); const [message, setMessage] = useState("");
   const load = () => api.planes(token).then(setPlans).catch((e) => setError(e.message));
-  useEffect(load, [token]);
+  useEffect(() => {
+    load();
+  }, [token]);
   const submit = async (event) => { event.preventDefault(); const f = new FormData(event.currentTarget); try { await api.crearPlan({ nombre: f.get("nombre"), precio_centavos: Math.round(Number(f.get("precio")) * 100), duracion_dias: Number(f.get("dias")) }, token); setShowForm(false); setMessage("Plan creado correctamente."); load(); } catch (e) { setError(e.message); } };
   const toggle = async (plan) => { try { await api.editarPlan(plan.id, { activo: !plan.activo }, token); setMessage(`Plan ${plan.activo ? "desactivado" : "activado"}.`); load(); } catch (e) { setError(e.message); } };
   return <><PageHeading title="Planes de membresía" description="Crea y activa los planes disponibles."><button className="button primary" onClick={() => setShowForm(!showForm)}><Plus size={18}/>Nuevo plan</button></PageHeading>{message && <p className="form-message success">{message}</p>}{error && <p className="form-message error">{error}</p>}

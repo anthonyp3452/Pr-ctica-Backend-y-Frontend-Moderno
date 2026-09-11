@@ -8,6 +8,8 @@ import {
   Dumbbell,
   LayoutDashboard,
   Menu,
+  Moon,
+  Sun,
   Users,
   X,
 } from "lucide-react";
@@ -41,6 +43,7 @@ export function Brand() {
 export default function Layout() {
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("gymcontrol.theme") === "dark");
   const location = useLocation();
   useEffect(() => {
     setMenuOpen(false);
@@ -52,6 +55,10 @@ export default function Layout() {
     document.addEventListener("keydown", close);
     return () => document.removeEventListener("keydown", close);
   }, []);
+  useEffect(() => {
+    document.documentElement.classList.toggle("theme-dark", darkMode);
+    localStorage.setItem("gymcontrol.theme", darkMode ? "dark" : "light");
+  }, [darkMode]);
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main">
@@ -111,7 +118,9 @@ export default function Layout() {
             <strong>Recepción</strong>
           </span>
           <div className="topbar-right">
-            <span className="sample-pill">Vista de ejemplo</span>
+            <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)} aria-label={darkMode ? "Activar modo claro" : "Activar modo oscuro"}>
+              {darkMode ? <Sun size={17} /> : <Moon size={17} />}
+            </button>
             <span className="sample-date">
               <CalendarDays size={16} aria-hidden="true" />
               10 sep 2026
@@ -122,10 +131,8 @@ export default function Layout() {
           <Outlet />
         </main>
         <footer className="workspace-footer">
-          <span>
-            GymControl <span aria-hidden="true">·</span> Fase 1
-          </span>
-          <span>Datos ficticios. Sin conexión al backend.</span>
+          <span>GymControl</span>
+          <span>Datos conectados a la API.</span>
         </footer>
       </div>
     </div>

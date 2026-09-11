@@ -2,7 +2,7 @@
 
 Aplicación académica para que el personal de un gimnasio gestione socios, planes de membresía y asistencias. Stack: React + Vite (frontend), Express + SQLite (backend).
 
-**Estado actual:** frontend de fase 1 en `main` (pantallas con datos ficticios) y backend completo disponible en `main` (API Express + SQLite). La integración login/CRUD reales entre ambos sigue las fases siguientes.
+**Estado actual:** aplicación integrada. El frontend React consume la API Express/SQLite, usa JWT y permite gestionar socios, planes, membresías y asistencias.
 
 | Rol | Persona |
 | --- | --- |
@@ -48,17 +48,16 @@ La vista de producción utiliza http://127.0.0.1:4173. Los scripts tienen puerto
 
 ### Configuración frontend
 
-`frontend/.env.example` documenta `VITE_API_URL=http://localhost:3000/api`. No es necesario crear `.env` en la fase 1 del frontend, porque aún usa datos ficticios. Al integrar con la API, copiar el ejemplo a `.env`. Las variables `VITE_` son públicas; no colocar `JWT_SECRET` ni credenciales en ellas.
+Copiar `frontend/.env.example` a `frontend/.env` y conservar `VITE_API_URL=http://localhost:3000/api`. Las variables `VITE_` son públicas; no colocar `JWT_SECRET` ni credenciales en ellas.
 
-### Qué se puede revisar ahora (frontend)
+### Funcionalidades del frontend
 
-- Dashboard, socios, detalle, alta, edición, planes, asistencias y login.
-- Navegación principal y enlaces entre listado, detalle y formularios; ruta 404 e ids desconocidos.
-- Búsqueda y filtros sobre los datos ficticios de socios y asistencias.
-- Navegación móvil mediante el botón de menú.
-- [Prototipo UX/UI](docs/ux/README.md) y [estado del trabajo frontend](docs/ESTADO_FRONTEND.md).
-
-Login real, guardado, eliminación, creación de planes y registro de entradas dependen de conectar el frontend al backend. Los botones de escritura del frontend aún pueden estar deshabilitados en esta fase visual.
+- Login con JWT y rutas protegidas.
+- Dashboard con indicadores y actividad recientes reales.
+- CRUD de socios, creación/activación de planes, asignación de membresías y registro de asistencias.
+- Validaciones del navegador y mensajes de carga, vacío, error y éxito.
+- Tema oscuro persistente, navegación móvil y diseño responsive.
+- [Prototipo UX/UI](docs/ux/README.md).
 
 ## Backend — instalación y ejecución
 
